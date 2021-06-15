@@ -1,1 +1,117 @@
+//Many To One
 
+@Entity
+public class Book {
+	@Id
+	@GeneratedValue
+	private long bookId;
+	private String bookName;
+	private String author;
+	
+	@ManyToOne(  cascade=CascadeType.REMOVE,fetch=FetchType.EAGER)
+	  @JoinColumn(name="categorie_id")
+	private Categorie categorie;
+
+
+@Entity
+public class Categorie {
+	@Id
+	@GeneratedValue
+	private Long id;
+	private String name;
+	@JsonIgnore
+	@OneToMany(mappedBy = "categorie", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	private List<Book> books = new ArrayList<>();
+
+//
+Many To Many
+@Entity
+@Table(name = "posts")
+public class Post {
+	
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
+	
+	@Column(name = "title")
+    private String title;
+	
+	@Column(name = "description")
+    private String description;
+	
+	@Column(name = "content")
+    private String content;
+	
+	@Column(name = "posted_at")
+    private Date postedAt = new Date();
+	
+	@Column(name = "last_updated_at")
+    private Date lastUpdatedAt = new Date();
+	
+	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@JoinTable(name = "post_tags",
+		joinColumns = { @JoinColumn(name = "post_id")},
+		inverseJoinColumns = { @JoinColumn (name = "tag_id")})
+	private Set<Tag> tags = new HashSet<>();
+  
+  
+  @Entity
+@Table( name = "tags")
+public class Tag {
+	
+	@Id
+	@GeneratedValue (strategy = GenerationType.IDENTITY)
+	private long id;
+	private String name;
+	
+	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "tags")
+	private Set<Post> posts = new HashSet<>();
+  
+  
+  One To One
+  
+  
+@Entity
+@Table(name = "users")
+public class User {
+	
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private long id;
+	
+	@Column(name = "name")
+	private String name;
+	
+	@Column(name = "email")
+	private String email;
+	
+	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@JoinColumn(name = "up_id")
+	private UserProfile userProfile;
+  
+  
+  
+  @Entity
+@Table(name = "user_profiles")
+public class UserProfile {
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private long id;
+
+	@Column(name = "phone_number")
+	private String phoneNumber;
+
+	@Column(name = "address")
+	private String address;
+
+	@Enumerated(EnumType.STRING)
+	@Column(name = "gender")
+	private Gender gender;
+
+	@Column(name = "birth_of_date")
+	private LocalDate birthOfDate;
+
+	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "userProfile")
+	private User user;
+  
